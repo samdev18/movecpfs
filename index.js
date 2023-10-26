@@ -24,6 +24,7 @@ function moveFilesFromSpreadsheet({
   console.info("movendo arquivos")
 
   xlData.forEach(row => {
+    console.log(row)
     const normalizedFileNameFromSheet = normalizeCPF(row["Arquivos"]);
 
     // Encontra um arquivo que corresponda ao CPF normalizado
