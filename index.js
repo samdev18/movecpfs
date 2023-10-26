@@ -4,7 +4,6 @@ const xlsx = require('xlsx');
 const yargs = require('yargs');
 
 function normalizeCPF(cpf) {
-  // Remove pontos, traços e quaisquer caracteres não numéricos
   return cpf.replace(/[^0-9]/g, '');
 }
 
@@ -27,7 +26,6 @@ function moveFilesFromSpreadsheet({
     console.log(row)
     const normalizedFileNameFromSheet = normalizeCPF(row["Arquivos"].toString());
 
-    // Encontra um arquivo que corresponda ao CPF normalizado
     const matchedFile = fs.readdirSync(nomeDaPastaComArquivos).find(file => {
       const normalizedFileName = normalizeCPF(path.basename(file, path.extname(file)));
       return normalizedFileName === normalizedFileNameFromSheet;
