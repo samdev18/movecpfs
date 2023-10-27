@@ -48,7 +48,8 @@ async function copyDirectoryRecursive(sourceDir, destDir) {
 async function moveFilesFromSpreadsheet({
   nomeDaPlanilha,
   nomeDaPastaComArquivos,
-  nomeDaNovaPasta
+  nomeDaNovaPasta,
+  acao
 }) {
   const workbook = xlsx.readFile(nomeDaPlanilha);
   const sheet_name_list = workbook.SheetNames;
@@ -65,7 +66,8 @@ async function moveFilesFromSpreadsheet({
     width: 40
   });
 
-  console.log(chalk.white.bgBlue.bold('Iniciando cópia de arquivos!'));
+  console.log(chalk.white.bgBlue.bold(`Operação selecionada: ${acao}`));
+  console.log(chalk.white.bgBlue.bold('Iniciando operação!'));
 
   const files = await fsp.readdir(nomeDaPastaComArquivos);
 
@@ -79,6 +81,9 @@ async function moveFilesFromSpreadsheet({
 
       if (await isDirectory(fullPathSource)) {
         await copyDirectoryRecursive(fullPathSource, fullPathDest);
+        if (acao === "mover") {
+          await fsp.rmdir(fullPathSource, { recursive: true });
+        }
       } else {
         await new Promise((resolve, reject) => {
           const readStream = createReadStream(fullPathSource);
@@ -90,6 +95,9 @@ async function moveFilesFromSpreadsheet({
           writeStream.on('error', err => reject(err));
           writeStream.on('finish', resolve);
         });
+        if (acao === "mover") {
+          await fsp.unlink(fullPathSource);
+        }
       }
       bar.tick();
     } else {
@@ -98,7 +106,7 @@ async function moveFilesFromSpreadsheet({
     }
   }
 
-  console.log('All files and directories have been copied.');
+  console.log('Operation completed.');
 }
 
 const argv = yargs(hideBin(process.argv))
@@ -117,7 +125,14 @@ const argv = yargs(hideBin(process.argv))
     alias: 'n',
     type: 'string'
   })
-  .demandOption(['nomeDaPlanilha', 'nomeDaPastaComArquivos', 'nomeDaNovaPasta'], 'Por favor, forneça todos os argumentos necessários para continuar')
+  .option('acao', {
+    description: 'Ação a ser realizada: mover ou copiar',
+    alias: 'a',
+    type: 'string',
+    choices: ['mover', 'copiar'],
+    demandOption: true
+  })
+  .demandOption(['p', 'o', 'n', 'a'], 'Por favor, forneça todos os argumentos necessários para continuar')
   .help()
   .alias('help', 'h')
   .argv;
@@ -125,7 +140,8 @@ const argv = yargs(hideBin(process.argv))
 moveFilesFromSpreadsheet({
   nomeDaPlanilha: argv.nomeDaPlanilha,
   nomeDaPastaComArquivos: argv.nomeDaPastaComArquivos,
-  nomeDaNovaPasta: argv.nomeDaNovaPasta
+  nomeDaNovaPasta: argv.nomeDaNovaPasta,
+  acao: argv.acao
 }).catch(error => {
   console.error('An error occurred:', error);
 });
