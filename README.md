@@ -11,7 +11,7 @@ exemplo: se sua pasta de arquivos de cpf esta em documentos/arquivos, coloque os
 - rode o seguinte comando:
 node index.js -p {nome da planilha}.xlsx -o {nome da pasta com os arquivos} -n {nome da pasta de destino} -a {acao}
 
-exemplo:
+# exemplo:
 ## Para mover
  node index.js -p "D:\planilha.xlsx" -o "D:\300k" -n "D:\destino" -a mover
  
