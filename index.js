@@ -1,8 +1,6 @@
 import { createReadStream, createWriteStream, promises as fsp } from 'fs';
 import path from 'path';
 import xlsx from 'xlsx';
-import yargs from 'yargs/yargs';
-import { hideBin } from 'yargs/helpers';
 import ProgressBar from 'progress';
 import chalk from 'chalk';
 
@@ -87,39 +85,4 @@ async function moveFilesFromSpreadsheet({ nomeDaPlanilha, nomeDaPastaComArquivos
   console.log('Operação concluída.');
 }
 
-const argv = yargs(hideBin(process.argv))
-  .option('nomeDaPlanilha', {
-    description: 'Nome do arquivo da planilha',
-    alias: 'p',
-    type: 'string'
-  })
-  .option('nomeDaPastaComArquivos', {
-    description: 'Nome da pasta com os arquivos',
-    alias: 'o',
-    type: 'string'
-  })
-  .option('nomeDaNovaPasta', {
-    description: 'Nome da nova pasta',
-    alias: 'n',
-    type: 'string'
-  })
-  .option('acao', {
-    description: 'Ação a ser realizada: "mover" ou "copiar"',
-    alias: 'a',
-    choices: ['mover', 'copiar'],
-    demandOption: true,
-    type: 'string'
-  })
-  .demandOption(['nomeDaPlanilha', 'nomeDaPastaComArquivos', 'nomeDaNovaPasta'], 'Por favor, forneça todos os argumentos necessários para continuar')
-  .help()
-  .alias('help', 'h')
-  .argv;
-
-moveFilesFromSpreadsheet({
-  nomeDaPlanilha: argv.nomeDaPlanilha,
-  nomeDaPastaComArquivos: argv.nomeDaPastaComArquivos,
-  nomeDaNovaPasta: argv.nomeDaNovaPasta,
-  acao: argv.acao
-}).catch(error => {
-  console.error('An error occurred:', error);
-});
+export { moveFilesFromSpreadsheet }

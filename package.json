@@ -1,18 +1,21 @@
 {
-  "name": "movefiles",
+  "name": "sistema",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": "./cli.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "chalk": "^5.3.0",
+    "inquirer": "^9.2.11",
     "progress": "^2.0.3",
+    "readdirp": "^3.6.0",
     "xlsx": "^0.18.5",
     "yargs": "^17.7.2"
   }
