@@ -2,13 +2,18 @@ import inquirer from 'inquirer';
 import { moveFilesFromSpreadsheet } from './index.js';
 import { renameItemsInDirectory } from './renomearArquivos.js';
 import { spreadSheetToDoc } from './SpreadSheetToDoc.js';
+import { completeUserSheet } from './higienizar.js';
 
 const mainMenuQuestions = [
     {
         type: 'list',
         name: 'action',
         message: 'Selecione o que deseja fazer:',
-        choices: ['Mover/copiar arquivos', 'Renomear arquivos e pastas', 'Converter planilha para documentos Word'],
+        choices: ['Mover/copiar arquivos',
+            'Renomear arquivos e pastas',
+            'Converter planilha para documentos Word',
+            'Higienizar'
+        ],
     },
 
 ];
@@ -81,6 +86,26 @@ const spreadSheetToDocQuestions = [
     },
 ];
 
+const completeSheetQuestions = [
+    {
+        type: 'input',
+        name: 'baseSpreadsheetPath',
+        message: 'Informe o caminho da planilha base de dados:',
+    },
+    {
+        type: 'input',
+        name: 'userSpreadsheetPath',
+        message: 'Informe o caminho da planilha do usuário que você deseja completar:',
+    },
+    {
+        type: 'confirm',
+        name: 'confirm',
+        message: 'Confirma a execução com os parâmetros fornecidos?',
+        default: true,
+    },
+];
+
+
 async function main() {
     const { action } = await inquirer.prompt(mainMenuQuestions);
 
@@ -108,6 +133,14 @@ async function main() {
             if (answers.confirm) {
                 await spreadSheetToDoc(answers.spreadsheetPath, answers.wordTemplatePath, answers.outputDirectory);
                 console.log('Conversão de planilha para documentos Word concluída.');
+            }
+            break;
+        }
+        case 'Higienizar': {
+            const answers = await inquirer.prompt(completeSheetQuestions);
+            if (answers.confirm) {
+                await completeUserSheet(answers.userSpreadsheetPath, answers.baseSpreadsheetPath);
+                console.log('Planilha completada.');
             }
             break;
         }

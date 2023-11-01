@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import ExcelJS from 'exceljs';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
@@ -14,6 +14,9 @@ const formatDate = date => {
 };
 
 const spreadSheetToDoc = async (excelFile, templateDoc, outputDirectory) => {
+  if (!existsSync(outputDirectory)) {
+    mkdirSync(outputDirectory, { recursive: true });
+  }
   const loadWordTemplate = () => {
     const content = readFileSync(templateDoc, 'binary');
     const zip = new PizZip(content);
@@ -24,7 +27,6 @@ const spreadSheetToDoc = async (excelFile, templateDoc, outputDirectory) => {
   await workbook.xlsx.readFile(excelFile);
   const worksheet = workbook.getWorksheet(1);
 
-  // Crie a barra de progresso
   const bar = new ProgressBar(':bar :percent :etas', { total: worksheet.actualRowCount - 1 });
 
   let columnNames = [];
