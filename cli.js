@@ -1,14 +1,16 @@
 import inquirer from 'inquirer';
-import {moveFilesFromSpreadsheet} from './index.js';  
-import {renameItemsInDirectory} from './renomearArquivos.js';  
+import { moveFilesFromSpreadsheet } from './index.js';
+import { renameItemsInDirectory } from './renomearArquivos.js';
+import { spreadSheetToDoc } from './SpreadSheetToDoc.js';
 
 const mainMenuQuestions = [
     {
         type: 'list',
         name: 'action',
         message: 'Selecione o que deseja fazer:',
-        choices: ['Mover/copiar arquivos', 'Renomear arquivos e pastas'],
+        choices: ['Mover/copiar arquivos', 'Renomear arquivos e pastas', 'Converter planilha para documentos Word'],
     },
+
 ];
 
 const moveCopyQuestions = [
@@ -55,6 +57,30 @@ const renameQuestions = [
     },
 ];
 
+const spreadSheetToDocQuestions = [
+    {
+        type: 'input',
+        name: 'spreadsheetPath',
+        message: 'Informe o caminho da planilha que você deseja converter:',
+    },
+    {
+        type: 'input',
+        name: 'wordTemplatePath',
+        message: 'Informe o caminho para o modelo de documento Word:',
+    },
+    {
+        type: 'input',
+        name: 'outputDirectory',
+        message: 'Informe o diretório onde os documentos Word serão salvos:',
+    },
+    {
+        type: 'confirm',
+        name: 'confirm',
+        message: 'Confirma a execução com os parâmetros fornecidos?',
+        default: true,
+    },
+];
+
 async function main() {
     const { action } = await inquirer.prompt(mainMenuQuestions);
 
@@ -73,6 +99,15 @@ async function main() {
             if (answers.confirm) {
                 await renameItemsInDirectory(answers.directoryPath);
                 console.log('Renomeação concluída.');
+            }
+            break;
+        }
+
+        case 'Converter planilha para documentos Word': {
+            const answers = await inquirer.prompt(spreadSheetToDocQuestions);
+            if (answers.confirm) {
+                await spreadSheetToDoc(answers.spreadsheetPath, answers.wordTemplatePath, answers.outputDirectory);
+                console.log('Conversão de planilha para documentos Word concluída.');
             }
             break;
         }
