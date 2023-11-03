@@ -12,7 +12,8 @@ const mainMenuQuestions = [
         choices: ['Mover/copiar arquivos',
             'Renomear arquivos e pastas',
             'Converter planilha para documentos Word',
-            'Higienizar'
+            'Higienizar',
+            'Sair'
         ],
     },
 
@@ -107,42 +108,50 @@ const completeSheetQuestions = [
 
 
 async function main() {
-    const { action } = await inquirer.prompt(mainMenuQuestions);
+    let shouldContinue = true;
 
-    switch (action) {
-        case 'Mover/copiar arquivos': {
-            const answers = await inquirer.prompt(moveCopyQuestions);
-            if (answers.confirm) {
-                await moveFilesFromSpreadsheet(answers);
-                console.log('Operação de mover/copiar concluída.');
+    while (shouldContinue) {
+        const { action } = await inquirer.prompt(mainMenuQuestions);
+        switch (action) {
+            case 'Mover/copiar arquivos': {
+                const answers = await inquirer.prompt(moveCopyQuestions);
+                if (answers.confirm) {
+                    await moveFilesFromSpreadsheet(answers);
+                    console.log('Operação de mover/copiar concluída.');
+                }
+                break;
             }
-            break;
-        }
 
-        case 'Renomear arquivos e pastas': {
-            const answers = await inquirer.prompt(renameQuestions);
-            if (answers.confirm) {
-                await renameItemsInDirectory(answers.directoryPath);
-                console.log('Renomeação concluída.');
+            case 'Renomear arquivos e pastas': {
+                const answers = await inquirer.prompt(renameQuestions);
+                if (answers.confirm) {
+                    await renameItemsInDirectory(answers.directoryPath);
+                    console.log('Renomeação concluída.');
+                }
+                break;
             }
-            break;
-        }
 
-        case 'Converter planilha para documentos Word': {
-            const answers = await inquirer.prompt(spreadSheetToDocQuestions);
-            if (answers.confirm) {
-                await spreadSheetToDoc(answers.spreadsheetPath, answers.wordTemplatePath, answers.outputDirectory);
-                console.log('Conversão de planilha para documentos Word concluída.');
+            case 'Converter planilha para documentos Word': {
+                const answers = await inquirer.prompt(spreadSheetToDocQuestions);
+                if (answers.confirm) {
+                    await spreadSheetToDoc(answers.spreadsheetPath, answers.wordTemplatePath, answers.outputDirectory);
+                    console.log('Conversão de planilha para documentos Word concluída.');
+                }
+                break;
             }
-            break;
-        }
-        case 'Higienizar': {
-            const answers = await inquirer.prompt(completeSheetQuestions);
-            if (answers.confirm) {
-                await completeUserSheet(answers.userSpreadsheetPath, answers.baseSpreadsheetPath);
-                console.log('Planilha completada.');
+            case 'Higienizar': {
+                const answers = await inquirer.prompt(completeSheetQuestions);
+                if (answers.confirm) {
+                    await completeUserSheet(answers.userSpreadsheetPath, answers.baseSpreadsheetPath);
+                    console.log('Planilha completada.');
+                }
+                break;
             }
-            break;
+
+            case 'Sair':
+                shouldContinue = false;
+                console.log('Saindo...');
+                break;
         }
     }
 }
